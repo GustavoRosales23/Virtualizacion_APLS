@@ -14,9 +14,11 @@
     
     Param(
     [Parameter(Mandatory=$true)]
+    [ValidateNotNullOrEmpty()]
     [int[]] $people,
 
     [Parameter(Mandatory=$true)]
+    [ValidateNotNullOrEmpty()]
     [int[]] $film
     )
 
