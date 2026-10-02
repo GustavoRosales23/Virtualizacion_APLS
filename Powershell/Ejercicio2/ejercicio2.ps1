@@ -1,3 +1,12 @@
+<#Grupo 6. Integrantes:
+ -Conforti, Luis Alberto
+ -Lista, Matías Josué
+ -Porras, Federico Emanuele
+ -Rosales, Gustavo Mauricio
+#>
+
+
+
 <#
 .Synopsis
    Multiplica o traspone una matriz a partir de un archivo de texto

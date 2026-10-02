@@ -1,3 +1,12 @@
+<#Grupo 6. Integrantes:
+ -Conforti, Luis Alberto
+ -Lista, Matías Josué
+ -Porras, Federico Emanuele
+ -Rosales, Gustavo Mauricio
+#>
+
+
+
 <#
 .SYNOPSIS
 Busca archivos duplicados dentro de un directorio y sus subdirectorios.

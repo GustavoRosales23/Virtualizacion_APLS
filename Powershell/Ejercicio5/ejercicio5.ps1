@@ -1,4 +1,11 @@
-﻿function Consultar_API_StarWars {
+﻿<#Grupo 6. Integrantes:
+ -Conforti, Luis Alberto
+ -Lista, Matías Josué
+ -Porras, Federico Emanuele
+ -Rosales, Gustavo Mauricio
+#>
+
+function Consultar_API_StarWars {
     <#
     .SYNOPSIS
       Script que consulta datos a la API de StarWars.
