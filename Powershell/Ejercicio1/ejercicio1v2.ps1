@@ -1,3 +1,10 @@
+<#Grupo 6. Integrantes:
+ -Conforti, Luis Alberto
+ -Lista, Matías Josué
+ -Porras, Federico Emanuele
+ -Rosales, Gustavo Mauricio
+#>
+
 <#
 .SYNOPSIS
 Procesa las jugadas de distintas agencias de loteria y obtiene las jugadas

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#Grupo 6. Integrantes:
+ #-Conforti, Luis Alberto
+ #-Lista, Matías Josué
+ #-Porras, Federico Emanuele
+ #-Rosales, Gustavo Mauricio
+
 # recibe Matriz, Filas, Columnas.
 function mostrarMatriz() {
 	declare -n ref_matriz=$1 # Referencia que apunta hacia la matriz

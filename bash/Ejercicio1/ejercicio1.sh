@@ -1,4 +1,10 @@
 #!/bin/bash
+#Grupo 6. Integrantes:
+ #-Conforti, Luis Alberto
+ #-Lista, Matías Josué
+ #-Porras, Federico Emanuele
+ #-Rosales, Gustavo Mauricio
+
 # --- Colores ---
 RED='\033[0;31m'
 GREEN='\033[0;32m'

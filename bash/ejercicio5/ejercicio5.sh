@@ -132,11 +132,11 @@ mostrar_personaje() {
     id="$2"
 
     echo "Id: $id"
-    echo "Name: $(jq -r '.result.properties.name' "$archivo")"
-    echo "Gender: $(jq -r '.result.properties.gender' "$archivo")"
-    echo "Height: $(jq -r '.result.properties.height' "$archivo")"
-    echo "Mass: $(jq -r '.result.properties.mass' "$archivo")"
-    echo "Birth Year: $(jq -r '.result.properties.birth_year' "$archivo")"
+    echo "Nombre: $(jq -r '.result.properties.name' "$archivo")"
+    echo "Genero: $(jq -r '.result.properties.gender' "$archivo")"
+    echo "Altura: $(jq -r '.result.properties.height' "$archivo")"
+    echo "Masa: $(jq -r '.result.properties.mass' "$archivo")"
+    echo "Año de nacimiento: $(jq -r '.result.properties.birth_year' "$archivo")"
     echo
 }
 
@@ -144,10 +144,10 @@ mostrar_personaje() {
 mostrar_pelicula() {
     archivo="$1"
 
-    echo "Title: $(jq -r '.result.properties.title' "$archivo")"
-    echo "Episode id: $(jq -r '.result.properties.episode_id' "$archivo")"
-    echo "Release date: $(jq -r '.result.properties.release_date' "$archivo")"
-    echo "Opening crawl: $(jq -r '.result.properties.opening_crawl' "$archivo")"
+    echo "Titulo: $(jq -r '.result.properties.title' "$archivo")"
+    echo "ID Episodio: $(jq -r '.result.properties.episode_id' "$archivo")"
+    echo "Fecha de publicacion: $(jq -r '.result.properties.release_date' "$archivo")"
+    echo "Apertura: $(jq -r '.result.properties.opening_crawl' "$archivo")"
     echo
 }
 
