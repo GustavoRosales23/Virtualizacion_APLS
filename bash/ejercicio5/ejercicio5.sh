@@ -51,7 +51,7 @@ while [[ $# -gt 0 ]]; do
             ;;
 
         *)
-            error "Parametro desconocido: $1"
+            error "Parámetro desconocido: $1"
             ;;
 
     esac

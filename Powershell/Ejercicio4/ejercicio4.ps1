@@ -1,5 +1,3 @@
-# Conforti, Lista, Rosales, Porras - Grupo 6
-
 <#
 .SYNOPSIS
     Detecta, resguarda y elimina archivos duplicados dentro de un directorio.
@@ -10,7 +8,7 @@
     El directorio a monitorear (junto con sus subdirectorios). Debe existir previo a la ejecución del script.
 .PARAMETER salida
     El directorio donde se guardaran las copias de los archivos que se detecten como duplicados en el directorio monitoreado. 
-    Puede no existir, previo a la ejecución del script.
+    Puede no existir previo a la ejecución del script.
 .PARAMETER kill
     Un flag que indica que se debe detener el monitoreo del directorio provisto.
 .EXAMPLE
@@ -56,7 +54,8 @@ $hash = [System.BitConverter]::ToString(
     )
 ).Replace("-", "").ToLower()
 
-$pidFile = Join-Path $env:TEMP "monitoreo_$hash.pid"
+$tempDir = [System.IO.Path]::GetTempPath()
+$pidFile = Join-Path $tempDir "monitoreo_$hash.pid"
 
 # ---------------------------------------------------------
 # Finalizar daemon
@@ -115,24 +114,37 @@ if (-not $daemon) {
     # Ruta del propio script.
     $script = $MyInvocation.MyCommand.Path
 
-    # Crear proceso daemon.
-    $proceso = Start-Process powershell.exe `
-        -ArgumentList @(
-            "-NoProfile",
-            "-ExecutionPolicy", "Bypass",
-            "-File", "`"$script`"",
-            "-directorio", "`"$directorio`"",
-            "-salida", "`"$salida`"",
-            "-daemon"
-        ) `
-        -WindowStyle Hidden `
-        -PassThru
+    # Obtener la ruta del ejecutable de PowerShell actual.
+    $powerShellExe = (Get-Process -Id $PID).Path
+
+    # Argumentos para iniciar el daemon.
+    $argumentos = @(
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", "`"$script`"",
+        "-directorio", "`"$directorio`"",
+        "-salida", "`"$salida`"",
+        "-daemon"
+    )
+
+    # Parámetros comunes.
+    $parametros = @{
+        FilePath = $powerShellExe
+        ArgumentList = $argumentos
+        PassThru = $true
+    }
+
+    # Ocultar la ventana únicamente en Windows.
+    if ($IsWindows) {
+        $parametros.WindowStyle = "Hidden"
+    }
+
+    $proceso = Start-Process @parametros
 
     # Guardar PID asociado a este directorio.
     $proceso.Id | Set-Content $pidFile
 
-    Write-Host "Monitoreo iniciado."
-    Write-Host "PID: $($proceso.Id)"
+    Write-Host "Monitoreo iniciado. PID: $($proceso.Id)"
 
     exit 0
 }
@@ -141,7 +153,7 @@ if (-not $daemon) {
 # Código del daemon
 # ---------------------------------------------------------
 
-# Se incluye el hash del directorio en el nombre 
+# Se incluye el hash del directorio en el nombre
 # por si dos directorios usan el mismo directorio de salida.
 $log = Join-Path $salida "monitoreo_$hash.log"
 
@@ -152,74 +164,86 @@ $datos = @{
 }
 
 $watcher = New-Object System.IO.FileSystemWatcher
-
 $watcher.Path = $directorio
 $watcher.IncludeSubdirectories = $true
 $watcher.EnableRaisingEvents = $true
 
 $accion = {
-    $archivo = $Event.SourceEventArgs.FullPath
 
+    $archivo = $Event.SourceEventArgs.FullPath
     $directorio = $Event.MessageData.directorio
     $salida = $Event.MessageData.salida
     $log = $Event.MessageData.log
 
-    if (-not (Test-Path $archivo -PathType Leaf)) {
+    function Write-Log($mensaje) {
+        Add-Content $log "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - $mensaje"
+    }
+
+    # Puede haber sido eliminado por un evento anterior (Created + Changed).
+    if (-not (Test-Path -LiteralPath $archivo -PathType Leaf)) {
         return
     }
 
-    $info = Get-Item $archivo
+    $info = Get-Item -LiteralPath $archivo
 
-    $duplicados = Get-ChildItem $directorio -File -Recurse |
+    $duplicados = Get-ChildItem -LiteralPath $directorio -File -Recurse |
         Where-Object {
             $_.Name -eq $info.Name -and
             $_.Length -eq $info.Length -and
             $_.FullName -ne $info.FullName
         }
 
-    if ($duplicados) {
+    if (-not $duplicados) {
+        return
+    }
 
-        $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-        $backup = Join-Path $salida "$timestamp.zip"
+    Write-Log "Duplicado detectado: $archivo"
 
-        Add-Content $log `
-            "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Duplicado detectado: $archivo"
+    $backup = Join-Path $salida "$(Get-Date -Format 'yyyyMMdd-HHmmss-fff').zip"
 
-        try {
-            Compress-Archive `
-                -Path $archivo `
-                -DestinationPath $backup `
-                -ErrorAction Stop
+    $ok = $false
+    $fsOrigen = $null; $fsZip = $null; $zip = $null; $entrada = $null
 
-            Add-Content $log `
-                "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Backup creado: $backup"
+    try {
+        $fsOrigen = [System.IO.File]::Open($archivo, 'Open', 'Read', 'ReadWrite')
 
-            Remove-Item $archivo
+        $fsZip = [System.IO.File]::Open($backup, 'Create', 'ReadWrite', 'None')
+        $zip = New-Object System.IO.Compression.ZipArchive($fsZip, [System.IO.Compression.ZipArchiveMode]::Create)
 
-            Add-Content $log `
-                "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Archivo eliminado: $archivo"
-        }
-        catch {
-            Add-Content $log `
-                "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - ERROR creando backup: $($_.Exception.Message)"
-        }
+        $entrada = $zip.CreateEntry($info.Name).Open()
+        $fsOrigen.CopyTo($entrada)
+
+        $ok = $true
+    }
+    catch {
+        Write-Log "ERROR creando backup: $($_.Exception.Message)"
+    }
+    finally {
+        if ($entrada)   { $entrada.Dispose() }
+        if ($zip)       { $zip.Dispose() }
+        if ($fsZip)     { $fsZip.Dispose() }
+        if ($fsOrigen)  { $fsOrigen.Dispose() }
+    }
+
+    if (-not $ok) {
+        Remove-Item -LiteralPath $backup -Force -ErrorAction SilentlyContinue
+        return
+    }
+
+    Write-Log "Backup creado: $backup"
+
+    try {
+        Remove-Item -LiteralPath $archivo -ErrorAction Stop
+        Write-Log "Archivo eliminado: $archivo"
+    }
+    catch {
+        Write-Log "ERROR eliminando archivo: $($_.Exception.Message)"
     }
 }
 
-Register-ObjectEvent $watcher Created `
-    -Action $accion `
-    -MessageData $datos |
-    Out-Null
-
-Register-ObjectEvent $watcher Renamed `
-    -Action $accion `
-    -MessageData $datos |
-    Out-Null
-
-Register-ObjectEvent $watcher Changed `
-    -Action $accion `
-    -MessageData $datos |
-    Out-Null
+Register-ObjectEvent $watcher Created -Action $accion -MessageData $datos | Out-Null
+Register-ObjectEvent $watcher Renamed -Action $accion -MessageData $datos | Out-Null
+Register-ObjectEvent $watcher Changed -Action $accion -MessageData $datos | Out-Null
 
 try {
     while ($true) {
