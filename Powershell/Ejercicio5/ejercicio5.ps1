@@ -5,19 +5,28 @@
  -Rosales, Gustavo Mauricio
 #>
 
-function Consultar_API_StarWars {
-    <#
-    .SYNOPSIS
-      Script que consulta datos a la API de StarWars.
-    .DESCRIPTION
-      Esta función realiza consultas a la API de SWAPI para obtener información sobre personajes y películas según los IDs ingresados.
-    .PARAMETER people
-      Arreglo de IDs numéricos para consultar personajes.
-    .PARAMETER film
-      Arreglo de IDs numéricos para consultar películas.
-    .EXAMPLE
-      Consultar_API_StarWars -people 1, 2 -film 1
-    #>
+
+<#
+  .SYNOPSIS
+     Consulta datos de personajes y películas de Star Wars desde SWAPI.
+
+  .DESCRIPTION
+     Realiza consultas a la API de SWAPI para obtener información detallada
+     de personajes y películas según los IDs numéricos ingresados.
+
+  .PARAMETER people
+     Arreglo de IDs numéricos para consultar personajes (ej: 1, 2, 3).
+
+  .PARAMETER film
+     Arreglo de IDs numéricos para consultar películas (ej: 1, 2, 3).
+
+  .EXAMPLE
+     Consultar_API_StarWars -people 1, 2 -film 1.
+
+     Consulta los personajes con ID 1 y 2, y la película con ID 1.
+#>
+
+function Consultar_API_StarWars(){
     
     Param(
     [Parameter(Mandatory=$true)]
@@ -77,5 +86,5 @@ function Consultar_API_StarWars {
       }
       Write-Host "`n"
     }
-
 }
+
