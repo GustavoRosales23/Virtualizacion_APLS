@@ -70,7 +70,7 @@ function Consultar_API_StarWars(){
 
     foreach ($pelicula in $film){
       
-      $url="https://www.swapi.tech/api/people/$pelicula"
+      $url="https://www.swapi.tech/api/films/$pelicula"
 
       if(-not $Global:RespuestaCache.ContainsKey($url)){
           $Global:RespuestaCache[$url]=Invoke-RestMethod -Uri $url  -Method Get
