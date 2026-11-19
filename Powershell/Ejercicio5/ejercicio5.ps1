@@ -1,6 +1,6 @@
-﻿<#Grupo 6. Integrantes:
+<#Grupo 6. Integrantes:
  -Conforti, Luis Alberto
- -Lista, Matías Josué
+ -Lista, Matias Josue
  -Porras, Federico Emanuele
  -Rosales, Gustavo Mauricio
 #>
@@ -8,22 +8,22 @@
 
 <#
   .SYNOPSIS
-     Consulta datos de personajes y películas de Star Wars desde SWAPI.
+     Consulta datos de personajes y peliculas de Star Wars desde SWAPI.
 
   .DESCRIPTION
-     Realiza consultas a la API de SWAPI para obtener información detallada
-     de personajes y películas según los IDs numéricos ingresados.
+     Realiza consultas a la API de SWAPI para obtener informacion detallada
+     de personajes y peliculas segun los IDs numericos ingresados.
 
   .PARAMETER people
-     Arreglo de IDs numéricos para consultar personajes (ej: 1, 2, 3).
+     Arreglo de IDs numericos para consultar personajes (ej: 1, 2, 3).
 
   .PARAMETER film
-     Arreglo de IDs numéricos para consultar películas (ej: 1, 2, 3).
+     Arreglo de IDs numericos para consultar peliculas (ej: 1, 2, 3).
 
   .EXAMPLE
      Consultar_API_StarWars -people 1, 2 -film 1.
 
-     Consulta los personajes con ID 1 y 2, y la película con ID 1.
+     Consulta los personajes con ID 1 y 2, y la pelicula con ID 1.
 #>
 
 function Consultar_API_StarWars(){
@@ -87,4 +87,5 @@ function Consultar_API_StarWars(){
       Write-Host "`n"
     }
 }
+
 
