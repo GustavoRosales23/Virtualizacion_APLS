@@ -7,11 +7,11 @@
     especificarse solo buscar por personajes o solo por películas,
     pero debe buscarse por alguno de los dos o ambos.
 .PARAMETER people
-    Arreglo de IDs numericos para consultar personajes (ej: 1, 2, 3).
+    Arreglo de IDs numericos para consultar personajes (ej: 1,2,3).
 .PARAMETER film
-    Arreglo de IDs numericos para consultar peliculas (ej: 1, 2, 3).
+    Arreglo de IDs numericos para consultar peliculas (ej: 1,2,3).
 .EXAMPLE
-    ./ejercicio5.ps1 -people 1, 2 -film 1.
+    ./ejercicio5.ps1 -people 1,2 -film 1.
     Consulta los personajes con ID 1 y 2, y la pelicula con ID 1.
 #>
 
